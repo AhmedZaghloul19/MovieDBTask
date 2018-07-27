@@ -13,6 +13,8 @@ let SERVICE_URL_PREFIX = "http://api.themoviedb.org/3/"
 let MOVIE_DB_API_KEY = "2696829a81b1b5827d515ff121700838"
 let URL_IMAGE_PREFIX = "http://image.tmdb.org/t/p/w[w]"
 
+let userData = UserDefaults.standard
+
 extension UIView{
     func dropShadow(scale: Bool = true) {
         DispatchQueue.main.async {

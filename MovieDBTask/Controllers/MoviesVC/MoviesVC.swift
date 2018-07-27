@@ -11,13 +11,15 @@ import UIKit
 class MoviesVC: BaseViewController {
 
     @IBOutlet weak var collectionView:UICollectionView!
-    @IBOutlet weak var searchGuideView:UIView!
+    @IBOutlet weak var searchGuideTableView:UITableView!
     @IBOutlet weak var activityIndicator:UIActivityIndicatorView!
     @IBOutlet weak var searchAlert: SearchAlert!
     
     var bottomSheetVC :FilterVC? = nil
     var movies :[Movie] = []
     var sortedMovies = [Movie]()
+    var recentSearchKeywords:[String] = []
+    var filteredSearchKeywords:[String] = []
     var selectedSortIndex = 3
     var pageNo = 1
     var maxPages = 1
@@ -27,31 +29,39 @@ class MoviesVC: BaseViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         self.constructRefreshControl()
         self.hideKeyboardWhenTappedAround()
+        self.recentSearchKeywords = (userData.value(forKey: "recent_keywords") as? [String]) ?? []
+
     }
     
     override func getData() {
         super.getData()
-        RequestManager.defaultManager.getMoviesWith(Keyword: "\(searchText)", pageNo: pageNo) { (error, movies, numberOfPages) in
-            if !error {
-                self.sortedMovies.removeAll()
-                self.selectedSortIndex = 3
-                self.movies = self.pageNo == 0 ? movies! : self.movies + movies!
-                self.maxPages = numberOfPages!
-            }else{
-                DispatchQueue.main.async {
-                    self.errorView.isHidden = false
+        if !self.searchText.isEmpty {
+            RequestManager.defaultManager.getMoviesWith(Keyword: "\(searchText)", pageNo: pageNo) { (error, movies, numberOfPages) in
+                if !error {
+                    self.sortedMovies.removeAll()
+                    self.selectedSortIndex = 3
+                    self.movies = self.pageNo == 0 ? movies! : self.movies + movies!
+                    self.maxPages = numberOfPages!
+                    if !self.searchText.isEmpty && movies!.count > 0 {
+                        self.addToRecents()
+                    }
+                }else{
+                    DispatchQueue.main.async {
+                        self.errorView.isHidden = false
+                    }
                 }
+                self.endLoadingAnimation()
             }
-            self.endLoadingAnimation()
+        }else{
+            endLoadingAnimation()
         }
     }
     
     override func beginLoadingAnimation() {
         DispatchQueue.main.async {
-            self.refreshControl.beginRefreshing()
+//            self.refreshControl.beginRefreshing()
             self.activityIndicator.startAnimating()
         }
     }
@@ -64,8 +74,17 @@ class MoviesVC: BaseViewController {
             if !self.searchText.isEmpty {
                 self.searchAlert.setIsFilteringToShow(filteredItemCount: self.movies.count)
             }
-            self.searchGuideView.isHidden = self.movies.count != 0
         }
+    }
+    
+    func addToRecents() {
+        if let foundedIndex = self.recentSearchKeywords.index(of: self.searchText) {
+            self.recentSearchKeywords.remove(at: foundedIndex)
+        }else if recentSearchKeywords.count >= 10 {
+            self.recentSearchKeywords.removeLast()
+        }
+        self.recentSearchKeywords.insert(self.searchText, at: 0)
+        userData.set(self.recentSearchKeywords, forKey: "recent_keywords")
     }
     
     fileprivate func constructRefreshControl() {
@@ -80,74 +99,30 @@ class MoviesVC: BaseViewController {
     }
     
     @IBAction func refresh(sender:AnyObject) {
+        self.resetAll()
+        getData()
+    }
+    
+    func resetAll() {
         self.pageNo = 1
         self.movies.removeAll()
         self.sortedMovies.removeAll()
         self.collectionView.reloadData()
-        
-        getData()
     }
     
-    @IBAction func searchSampleTapped(_ sender:UIButton){
-        searchText = sender.currentTitle!
+    func searchSampleTapped(sender:String){
+        searchText = sender
         let headerView:CollectionHeaderView = collectionView.supplementaryView(forElementKind: UICollectionElementKindSectionHeader, at: self.searchHeaderIndex) as! CollectionHeaderView
         
         headerView.searchBar.text = searchText
+        self.resetAll()
         getData()
-    }
-}
-
-extension MoviesVC:UICollectionViewDelegate,UICollectionViewDataSource,UICollectionViewDelegateFlowLayout{
-    
-    func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return 1
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return sortedMovies.count == 0 ? movies.count : sortedMovies.count
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "MovieCell", for: indexPath) as! MovieCell
-        let movie = sortedMovies.count == 0 ? movies[indexPath.item] : sortedMovies[indexPath.item]
-
-        cell.movie = movie
-        
-        return cell
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: (collectionView.frame.width - 30)/2, height: (collectionView.frame.height - 40)/3)
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let movie = sortedMovies.count == 0 ? movies[indexPath.item] : sortedMovies[indexPath.item]
-
-        self.performSegue(withIdentifier: "showMovieDetails", sender: movie)
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        if indexPath.item == self.movies.count - 1 && self.pageNo < self.maxPages{
-            self.pageNo += 1
-            self.getData()
-        }
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let vc = segue.destination as? MovieDetailsVC, let movie = sender as? Movie {
             vc.movie = movie
         }
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-        if (kind == UICollectionElementKindSectionHeader) {
-            let headerView:CollectionHeaderView =  collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionElementKindSectionHeader, withReuseIdentifier: "SearchHeader", for: indexPath) as! CollectionHeaderView
-            self.searchHeaderIndex = indexPath
-            return headerView
-        }
-        
-        return UICollectionReusableView()
-
     }
 }
 
