@@ -44,4 +44,10 @@ extension MoviesVC :SortingDelegate{
     func sortViewDidDismissed() {
         self.bottomSheetVC = nil
     }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        self.bottomSheetVC?.view.removeFromSuperview()
+        self.bottomSheetVC = nil
+    }
 }

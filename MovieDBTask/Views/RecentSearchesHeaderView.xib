@@ -21,9 +21,9 @@
             <rect key="frame" x="0.0" y="0.0" width="364" height="36"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xlQ-sg-Z2O">
-                    <rect key="frame" x="8" y="8" width="348" height="20"/>
-                    <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="15"/>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xlQ-sg-Z2O">
+                    <rect key="frame" x="16" y="8" width="340" height="20"/>
+                    <fontDescription key="fontDescription" type="boldSystem" pointSize="24"/>
                     <color key="textColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                     <nil key="highlightedColor"/>
                     <color key="shadowColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -32,7 +32,7 @@
             </subviews>
             <color key="backgroundColor" cocoaTouchSystemColor="viewFlipsideBackgroundColor"/>
             <constraints>
-                <constraint firstItem="xlQ-sg-Z2O" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="8" id="GKJ-hL-LQ2"/>
+                <constraint firstItem="xlQ-sg-Z2O" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="16" id="GKJ-hL-LQ2"/>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" secondItem="xlQ-sg-Z2O" secondAttribute="bottom" constant="8" id="bvy-ls-G84"/>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="xlQ-sg-Z2O" secondAttribute="trailing" constant="8" id="e4U-3Z-HgF"/>
                 <constraint firstItem="xlQ-sg-Z2O" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" constant="8" id="plH-2k-g8e"/>
