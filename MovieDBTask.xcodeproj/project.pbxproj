@@ -175,8 +175,7 @@
 				0432549B21074C98007B907C /* CollectionHeaderView.swift */,
 				043254892105F460007B907C /* ConnectionErrorView */,
 				0432549F21076EA5007B907C /* SearchAlert.swift */,
-				042E51A22108CFCD00E795A4 /* RecentSearchesHeaderView.swift */,
-				042E51A42108D01F00E795A4 /* RecentSearchesHeaderView.xib */,
+				04E64655210CE44E0097A200 /* RecentSearchesHeaderView */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -200,6 +199,15 @@
 				042E51A6210A8D2000E795A4 /* MoviesVCCollectionViewExtension.swift */,
 			);
 			path = MoviesVC;
+			sourceTree = "<group>";
+		};
+		04E64655210CE44E0097A200 /* RecentSearchesHeaderView */ = {
+			isa = PBXGroup;
+			children = (
+				042E51A22108CFCD00E795A4 /* RecentSearchesHeaderView.swift */,
+				042E51A42108D01F00E795A4 /* RecentSearchesHeaderView.xib */,
+			);
+			path = RecentSearchesHeaderView;
 			sourceTree = "<group>";
 		};
 		21F6665F02E35521B7E408FE /* Pods */ = {
